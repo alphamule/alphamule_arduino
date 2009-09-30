@@ -23,7 +23,7 @@ int value(int intensity_knob, int color_knob, float phase) {
   long time = millis();
   int granularity = 10000;
   int angle = map(time % period_millis, 0, period_millis, 0, 2*PI*granularity);
-  int sine = sin(angle/granularity.0+phase*PI)*granularity;
+  int sine = sin(angle/granularity+phase*PI)*granularity;
   int max_value = map(intensity_knob, 0, 1024, 0, 255);
   int out_value = map(sine, -1*granularity, granularity, 0, max_value);
 
