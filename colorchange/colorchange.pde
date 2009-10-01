@@ -23,7 +23,7 @@ int value(int intensity_knob, int color_knob, float phase) {
   int angle = map(time % period_millis, 0, period_millis, 0, 2*PI*granularity);
   int sine = sin(1.0*angle/granularity+phase*PI)*granularity;
   int max_value = map(intensity_knob, 0, 1024, 0, 255);
-  int out_value = map(sine, -1*granularity, granularity, 1, max_value);
+  int out_value = map(sine, -1*granularity, granularity, 0, max_value);
 
   return out_value;
 }
@@ -34,11 +34,13 @@ void loop() {
   int angle = analogRead(sensor4);
   int max_intensity = analogRead(sensor5);
 
-  int g_value = value(max_intensity, angle, 0);
+  int g_value = value(max_intensity, angle, 0) * 0.75;
   int b_value = value(max_intensity, angle, 2.0/3);
   int r_value = value(max_intensity, angle, 4.0/3);
 
   analogWrite(pin11, g_value);
   analogWrite(pin10, b_value);
   analogWrite(pin9, r_value);
+  
+  delay(25);
 }
