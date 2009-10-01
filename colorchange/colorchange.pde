@@ -23,9 +23,9 @@ int value(int intensity_knob, int color_knob, float phase) {
   long time = millis();
   int granularity = 10000;
   int angle = map(time % period_millis, 0, period_millis, 0, 2*PI*granularity);
-  int sine = sin(angle/granularity+phase*PI)*granularity;
+  int sine = sin(1.0*angle/granularity+phase*PI)*granularity;
   int max_value = map(intensity_knob, 0, 1024, 0, 255);
-  int out_value = map(sine, -1*granularity, granularity, 0, max_value);
+  int out_value = map(sine, -1*granularity, granularity, 1, max_value);
 
   if(phase == -1) {
     Serial.print("time: ");
@@ -63,11 +63,11 @@ void loop() {
   //  Serial.print(max_intensity);
 
   if (times++ % 500 == 0) {  
-    Serial.print(" r_value: ");
-    Serial.print(r_value);
+//    Serial.print(" r_value: ");
+//    Serial.print(r_value);
     Serial.print(" g_value: ");
-    Serial.print(g_value);
-    Serial.print(" b_value: ");
-    Serial.println(b_value);
+    Serial.println(g_value);
+//    Serial.print(" b_value: ");
+//    Serial.println(b_value);
   }
 }
