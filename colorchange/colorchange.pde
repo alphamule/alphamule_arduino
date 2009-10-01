@@ -1,4 +1,4 @@
-#define PI 3.1415;
+#define PI 3.14159;
 
 int pin9 = 9;
 int pin10 = 10;
@@ -14,8 +14,6 @@ void setup() {
 
   pinMode(sensor4, INPUT);
   pinMode(sensor5, INPUT);
-
-  Serial.begin(9600);
 }
 
 int value(int intensity_knob, int color_knob, float phase) {
@@ -27,20 +25,7 @@ int value(int intensity_knob, int color_knob, float phase) {
   int max_value = map(intensity_knob, 0, 1024, 0, 255);
   int out_value = map(sine, -1*granularity, granularity, 1, max_value);
 
-  if(phase == -1) {
-    Serial.print("time: ");
-    Serial.print(time);
-    Serial.print(" period_millis: ");
-    Serial.print(period_millis);
-    Serial.print(" angle: ");
-    Serial.print(angle);
-    Serial.print(" sine: ");
-    Serial.print(sine);
-    Serial.print(" out_value: ");
-    Serial.println(out_value);
-  }
   return out_value;
-
 }
 
 int times = 0;
@@ -56,18 +41,4 @@ void loop() {
   analogWrite(pin11, g_value);
   analogWrite(pin10, b_value);
   analogWrite(pin9, r_value);
-
-  //  Serial.print("period: ");
-  //  Serial.print(period);
-  //  Serial.print(" max_intensity: ");
-  //  Serial.print(max_intensity);
-
-  if (times++ % 500 == 0) {  
-//    Serial.print(" r_value: ");
-//    Serial.print(r_value);
-    Serial.print(" g_value: ");
-    Serial.println(g_value);
-//    Serial.print(" b_value: ");
-//    Serial.println(b_value);
-  }
 }
