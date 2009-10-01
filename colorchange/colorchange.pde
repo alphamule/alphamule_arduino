@@ -1,29 +1,38 @@
 #define PI 3.14159;
 
-int pin9 = 9;
-int pin10 = 10;
-int pin11 = 11;
+int redPin = 9;
+int bluePin = 10;
+int greenPin = 11;
+int periodPin = 4;
+int intensityPin = 5;
 
-int sensor4 = 4;
-int sensor5 = 5;
+float greenDampeningFactor = 0.75;
+int sleepMillis = 25;
+int granularity = 10000;
+int minPeriodMillis = 500;
+int maxPeriodMillis = 6000;
+
+int minOut = 0;
+int maxOut = 255;
+int minIn = 0;
+int maxIn = 1024;
+
 
 void setup() {
-  pinMode(pin9, OUTPUT);
-  pinMode(pin10, OUTPUT);
-  pinMode(pin11, OUTPUT);
+  pinMode(redPin, OUTPUT);
+  pinMode(bluePin, OUTPUT);
+  pinMode(greenPin, OUTPUT);
 
-  pinMode(sensor4, INPUT);
-  pinMode(sensor5, INPUT);
+  pinMode(periodPin, INPUT);
+  pinMode(intensityPin, INPUT);
 }
 
-int value(int intensity_knob, int color_knob, float phase) {
-  int period_millis = map(color_knob, 0, 1024, 500, 6000);
-  long time = millis();
-  int granularity = 10000;
-  int angle = map(time % period_millis, 0, period_millis, 0, 2*PI*granularity);
+int value(int intensity, int period, float phase) {
+  int periodMillis = map(period, minIn, maxIn, minPeriodMillis, maxPeriodMillis);
+  int angle = map(millis() % periodMillis, 0, periodMillis, 0, 2*PI*granularity);
   int sine = sin(1.0*angle/granularity+phase*PI)*granularity;
-  int max_value = map(intensity_knob, 0, 1024, 0, 255);
-  int out_value = map(sine, -1*granularity, granularity, 0, max_value);
+  int maxValue = map(intensity, minIn, maxIn, minOut, maxOut);
+  int out_value = map(sine, -1*granularity, granularity, 0, maxValue);
 
   return out_value;
 }
@@ -31,16 +40,16 @@ int value(int intensity_knob, int color_knob, float phase) {
 int times = 0;
 
 void loop() {
-  int angle = analogRead(sensor4);
-  int max_intensity = analogRead(sensor5);
+  int period = analogRead(periodPin);
+  int max_intensity = analogRead(intensityPin);
 
-  int g_value = value(max_intensity, angle, 0) * 0.75;
-  int b_value = value(max_intensity, angle, 2.0/3);
-  int r_value = value(max_intensity, angle, 4.0/3);
+  int greenValue = value(max_intensity, period, 0) * greenDampeningFactor;
+  int blueValue = value(max_intensity, period, 2.0/3);
+  int redValue = value(max_intensity, period, 4.0/3);
 
-  analogWrite(pin11, g_value);
-  analogWrite(pin10, b_value);
-  analogWrite(pin9, r_value);
+  analogWrite(greenPin, greenValue);
+  analogWrite(bluePin, blueValue);
+  analogWrite(redPin, redValue);
   
-  delay(25);
+  delay(sleepMillis);
 }
