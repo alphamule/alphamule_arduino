@@ -32,20 +32,27 @@ int value(int intensity, int period, float phase) {
   int angle = map(millis() % periodMillis, 0, periodMillis, 0, 2*PI*granularity);
   int sine = sin(1.0*angle/granularity+phase*PI)*granularity;
   int maxValue = map(intensity, minIn, maxIn, minOut, maxOut);
-  int out_value = map(sine, -1*granularity, granularity, 0, maxValue);
+  int outValue = map(sine, -1*granularity, granularity, 0, maxValue);
 
-  return out_value;
+  return outValue;
 }
 
-int times = 0;
+int lastPeriod = 0;
 
 void loop() {
   int period = analogRead(periodPin);
-  int max_intensity = analogRead(intensityPin);
+  int maxIntensity = analogRead(intensityPin);
 
-  int greenValue = value(max_intensity, period, 0) * greenDampeningFactor;
-  int blueValue = value(max_intensity, period, 2.0/3);
-  int redValue = value(max_intensity, period, 4.0/3);
+  // smooth period values
+  if (abs(period - lastPeriod) > 5) {
+  	lastPeriod = period;
+  } else {
+  	period = lastPeriod;
+  }
+
+  int greenValue = value(maxIntensity, period, 0) * greenDampeningFactor;
+  int blueValue = value(maxIntensity, period, 2.0/3);
+  int redValue = value(maxIntensity, period, 4.0/3);
 
   analogWrite(greenPin, greenValue);
   analogWrite(bluePin, blueValue);
